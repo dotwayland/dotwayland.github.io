@@ -1,0 +1,9 @@
+name: WM
+url: http://blog.nullkey.net
+description: Never trust anyone who has not brought a book with them
+
+permalink: /:year/:month/:day/:title/
+paginate: 10
+
+plugins: [jekyll-paginate]
+exclude: ['README.md', 'Gemfile.lock', 'Gemfile', 'Rakefile']

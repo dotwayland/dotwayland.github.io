@@ -1,0 +1,152 @@
+<!DOCTYPE html>
+<html>
+<head>
+
+  <meta charset="UTF-8">
+  <title>Setting up an SSH Tunnel for Safer Browsing</title>
+  <meta name="viewport" content="width=device-width">
+
+  <!--[if lt IE 9]>
+    <script src="http://html5shiv.googlecode.com/svn/trunk/html5.js"></script>
+  <![endif]-->
+
+  <link href="/assets/css/style.css" rel="stylesheet" />
+  <link href="/assets/css/colors-dark.css" rel="stylesheet" />
+
+</head>
+
+<body>
+
+
+
+  <header id="header">
+    <center><h1><a href="/"><i class="icon-sun"></i></a></h1><center>
+    <p>Never trust anyone who has not brought a book with them</p>
+  </header>
+
+
+
+  <div id="page">
+
+
+
+    <div id="sidebar">
+      <nav>
+        <ul>
+          <li><a href="/">Home</a></li>
+          <li><a href="/archives">Archive</a></li>
+          <li><a href="/about">About</a></li>
+          <li><a href="http://github.com/dotwayland">Github</a></li>
+          <li><a href="http://twitter.com/notx11">Twitter</a></li>
+          <li><a href="/feed.xml">RSS Feed</a></li>
+        </ul>
+      </nav>
+    </div>
+
+
+
+    <div id="content">
+      <article class="post">
+
+	
+		<h1><a href="/2015/07/24/ssh-tunneling/">Setting up an SSH Tunnel for Safer Browsing</a></h1>
+	
+
+	<div class="post-content"><p>There may be times where you need to browse the web from an untrusted network. Examples include anything from a public library, coffee shop, a hotel, or even your place of employment. In any of these scenarios your communications could be monitored by a malicious user or curious network administrator.</p>
+
+<p>This guide will show you how to establish a secure connection for browsing the web through a tunnel between your computer and your an SSH server that you control. After reading this, you will be able to set up a tunnel between your computer and your SSH server. All of your web traffic will be encrypted and forwarded from your SSH server on to its final destination.</p>
+
+<p>This works by creating a SOCKS proxy listener on your computer using SSH and configuring your browser to send all web traffic through the SOCKS connection so that it can be sent by your SSH server to a given web destination on your behalf. This guide will also demonstrate how to prevent your browser from exposing information about your web browsing behavior via DNS leaks.</p>
+
+<p>This guide assumes that your threat model includes the local network that your computer is currently connected, and not your trusted SSH server, the network that it is connecting from or the website(s) that you intend to visit.</p>
+
+<p>What you will need</p>
+
+<ul>
+  <li>An SSH client</li>
+  <li>An SSH server</li>
+  <li>A web browser</li>
+</ul>
+
+<p>Setting up the SSH server to allow port forwarding</p>
+
+<p>Look for the <code class="highlighter-rouge">AllowTcpForwarding</code> no directive in your SSH server’s <code class="highlighter-rouge">/etc/ssh/sshd_config</code> file, and change it to <code class="highlighter-rouge">AllowTcpForwarding yes</code> before restarting the service. If the directive isn’t listed at all, simply add it and ensure that it is set to <code class="highlighter-rouge">yes</code>.</p>
+
+<p>Setting up the SOCKS server</p>
+
+<p>From your computer’s terminal, run the following:</p>
+
+<p><code class="highlighter-rouge">ssh -D 31337 user@remotehost.tld</code></p>
+
+<p><code class="highlighter-rouge">-D</code> tells SSH to listen on port <code class="highlighter-rouge">31337</code>. This works by allocating a socket to listen to port on the local side, optionally bound to the specified <code class="highlighter-rouge">bind_address</code>. Whenever a connection is made to this port, the connection is forwarded over the secure channel, and the application protocol is then used to determine where to connect to from the remote machine. Only root can forward privileged ports so be sure to choose any port number greater than 1024. You could choose something lower, but to ensure that there are no conflicts its best to choose a higher numbered port.</p>
+
+<p>This can also be accomplished by defining the <code class="highlighter-rouge">DynamicForward</code> parameter in your client’s <code class="highlighter-rouge">~/.ssh/config</code> file.</p>
+
+<div class="highlighter-rouge"><div class="highlight"><pre class="highlight"><code>Host remotehost.tld
+    HostName 13.37.13.37
+    User username
+    Port 22
+    IdentityFile ~/.ssh/id_rsa
+    DynamicForward 31337
+</code></pre></div></div>
+
+<p>In this scenario, you can simply type <code class="highlighter-rouge">ssh remotehost.tld</code> and your SSH client will take care of the rest.</p>
+
+<p>Setting Up Your Browser</p>
+
+<p>The last step is to configure your preferred browser to use the SOCKS server you just created. This guide assumes Firefox is being used but this can be accomplished with most other browsers.</p>
+
+<p>To set up the browser:</p>
+
+<ul>
+  <li>
+    <p>In Firefox, go to the Edit menu and select Preferences.</p>
+  </li>
+  <li>
+    <p>Go to Advanced and from there to the Network tab.</p>
+  </li>
+  <li>
+    <p>In the Connection area click on Settings.</p>
+  </li>
+</ul>
+
+<p>Make sure the <code class="highlighter-rouge">Remote DNS</code> option is selected. This can also be specified by typing <code class="highlighter-rouge">about:config</code> in Firefox and setting the <code class="highlighter-rouge">network.proxy.socks_remote_dns</code> parameter to <code class="highlighter-rouge">true</code></p>
+
+<p>This is crucial because although your web traffic will be encrypted and forwarded, your DNS requests will not if you do not tell also send your DNS queries through the SOCKS connection. You can fix that in Firefox, and make it send the DNS traffic to your tunnel as well. If you do not specify the remote DNS option, an observer on the untrusted LAN will not be able to see any communication to or from the sites that you are visiting, but will be able to see your browser requesting the IP addresses for their associated domain names which is also undesirable.</p>
+
+<p>Once you have everything set up, you should now verify that the websites you visit see the IP address of your SSH server, not the IP address allocated to you by the untrusted network. You can verify this by visiting a site such as ipchecking.com comparing the address that it thinks you are connecting from against that of your SSH server.</p>
+
+<p>Please keep in mind that the steps taken above will only secure network communications sent to or received by your web browser. Many applications have support for SOCKS proxying but will need to be configured on a case by case basis. If you find yourself using untrusted networks frequently, or have many applications that you need to secure communications for then the it might be time to step up to a VPN solution that has the capability to encrypt all traffic sent to or received by your computer’s network interface.</p>
+
+</div>
+
+	<p class="meta">Posted on <span class="postdate">Jul 24, 2015</span></p>
+
+</article>
+    </div>
+
+
+
+  </div>
+
+
+
+  <footer id="footer">
+    <center><p class="copyright">Copyleft &copy; 2018 WM. Powered by <a href="http://jekyllrb.com">Jekyll.</a></p></center>
+  </footer>
+
+
+
+  <script src="//ajax.googleapis.com/ajax/libs/jquery/1.10.1/jquery.min.js"></script>
+  <script src="/assets/js/jquery.mobilemenu.min.js"></script>
+
+  <script>
+    $(document).ready(function(){
+      $('#sidebar nav ul').mobileMenu({'topOptionText': 'Menu', 'prependTo': '#sidebar nav'});
+    });
+  </script>
+
+
+
+</body>
+</html>

@@ -1,0 +1,120 @@
+<!DOCTYPE html>
+<html>
+<head>
+
+  <meta charset="UTF-8">
+  <title>Generating a Certificate Signing Request (CSR)</title>
+  <meta name="viewport" content="width=device-width">
+
+  <!--[if lt IE 9]>
+    <script src="http://html5shiv.googlecode.com/svn/trunk/html5.js"></script>
+  <![endif]-->
+
+  <link href="/assets/css/style.css" rel="stylesheet" />
+  <link href="/assets/css/colors-dark.css" rel="stylesheet" />
+
+</head>
+
+<body>
+
+
+
+  <header id="header">
+    <center><h1><a href="/"><i class="icon-sun"></i></a></h1><center>
+    <p>Never trust anyone who has not brought a book with them</p>
+  </header>
+
+
+
+  <div id="page">
+
+
+
+    <div id="sidebar">
+      <nav>
+        <ul>
+          <li><a href="/">Home</a></li>
+          <li><a href="/archives">Archive</a></li>
+          <li><a href="/about">About</a></li>
+          <li><a href="http://github.com/dotwayland">Github</a></li>
+          <li><a href="http://twitter.com/notx11">Twitter</a></li>
+          <li><a href="/feed.xml">RSS Feed</a></li>
+        </ul>
+      </nav>
+    </div>
+
+
+
+    <div id="content">
+      <article class="post">
+
+	
+		<h1><a href="/2014/09/05/generate-csr/">Generating a Certificate Signing Request (CSR)</a></h1>
+	
+
+	<div class="post-content"><p>Create a directory for your domain underneath /etc/ssl and change into it</p>
+
+<p><code class="highlighter-rouge">derp@arkham:~# mkdir /etc/ssl/domain.tld &amp;&amp; cd /etc/ssl/domain.tld</code></p>
+
+<p>Generate an RSA private key for your domain and the certificate signing request, I’ve specified a 4096 bit long modulus and a SHA-2 cert in this example</p>
+
+<p><code class="highlighter-rouge">derp@arkham:/etc/ssl/domain.tld# openssl req -nodes -newkey rsa:4096 -sha256 -keyout domain.tld.key -out domain.tld.csr</code></p>
+
+<div class="highlighter-rouge"><div class="highlight"><pre class="highlight"><code>The fields required in a certificate signing request along with an explanation and example are listed below:
+Common name – The fully qualified domain name (FQDN) for your web server. This must be an exact match.
+Organization – The exact legal name of your organization. Do not abbreviate your organization name.
+Organization unit - Section of the organization, can be left empty if this does not apply to your case.
+City/Locality - The city where your organization is legally located.
+State/country/region - The state/county/region where your organization is legally located. Must not be abbreviated.
+Country - The two-letter ISO abbreviation for your country.
+Email address - The email address used to contact your organization.
+</code></pre></div></div>
+
+<p>Use restrictive permissions to protect the key file by making it readable only by its owner</p>
+
+<p><code class="highlighter-rouge">derp@arkham:/etc/ssl/domain.tld# chmod 400 domain.tld.key</code></p>
+
+<p>Make root the owner of the keyfile</p>
+
+<p><code class="highlighter-rouge">derp@arkham:/etc/ssl/domain.tld# chown root domain.tld.key</code></p>
+
+<p>Stream your newly created Base 64 representation of the Certificate Signing Request that you will use to obtain your SSL certificate.</p>
+
+<p><code class="highlighter-rouge">derp@arkham:/etc/ssl/domain.tld# cat domain.tld.csr</code></p>
+
+<div class="highlighter-rouge"><div class="highlight"><pre class="highlight"><code>-----BEGIN CERTIFICATE REQUEST-----
+Base 64 encoded data
+-----END CERTIFICATE REQUEST-----
+</code></pre></div></div>
+</div>
+
+	<p class="meta">Posted on <span class="postdate">Sep 05, 2014</span></p>
+
+</article>
+    </div>
+
+
+
+  </div>
+
+
+
+  <footer id="footer">
+    <center><p class="copyright">Copyleft &copy; 2018 WM. Powered by <a href="http://jekyllrb.com">Jekyll.</a></p></center>
+  </footer>
+
+
+
+  <script src="//ajax.googleapis.com/ajax/libs/jquery/1.10.1/jquery.min.js"></script>
+  <script src="/assets/js/jquery.mobilemenu.min.js"></script>
+
+  <script>
+    $(document).ready(function(){
+      $('#sidebar nav ul').mobileMenu({'topOptionText': 'Menu', 'prependTo': '#sidebar nav'});
+    });
+  </script>
+
+
+
+</body>
+</html>

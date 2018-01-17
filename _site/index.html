@@ -1,0 +1,434 @@
+<!DOCTYPE html>
+<html>
+<head>
+
+  <meta charset="UTF-8">
+  <title>Home</title>
+  <meta name="viewport" content="width=device-width">
+
+  <!--[if lt IE 9]>
+    <script src="http://html5shiv.googlecode.com/svn/trunk/html5.js"></script>
+  <![endif]-->
+
+  <link href="/assets/css/style.css" rel="stylesheet" />
+  <link href="/assets/css/colors-dark.css" rel="stylesheet" />
+
+</head>
+
+<body>
+
+
+
+  <header id="header">
+    <center><h1><a href="/"><i class="icon-sun"></i></a></h1><center>
+    <p>Never trust anyone who has not brought a book with them</p>
+  </header>
+
+
+
+  <div id="page">
+
+
+
+    <div id="sidebar">
+      <nav>
+        <ul>
+          <li><a href="/">Home</a></li>
+          <li><a href="/archives">Archive</a></li>
+          <li><a href="/about">About</a></li>
+          <li><a href="http://github.com/dotwayland">Github</a></li>
+          <li><a href="http://twitter.com/notx11">Twitter</a></li>
+          <li><a href="/feed.xml">RSS Feed</a></li>
+        </ul>
+      </nav>
+    </div>
+
+
+
+    <div id="content">
+      
+
+	<article class="post">
+
+		
+			<h1><a href="/2016/10/29/zero-risk-thinking/">Zero-risk thinking; Why you’d be less secure unplugged</a></h1>
+		
+
+		<div class="post-content"><p>My team recently had the joy of responding to yet another phishing attack. This time with an interesting “Hey, I’m a researcher too. Let’s collaborate!” pretext. Needless to say, it was effective. Also needless to say, our response was effective. We leveraged our logging prowess and a whole bunch of automation to squash the attack in not a lot of time.</p>
+
+<p>When responding to leaked credentials, we’ll take a concierge-like approach (time permitting) and call people to notify them of the issue. Responses range anywhere from frustration “Argh, I’m usually savvy about this stuff!” to denial “No, I don’t believe you”. The gist is that emotions run the gamut when a person finds out they have been deceived. A question I often get is “What can I do to prevent this from happening again?” There are always the standard answers, such as “We’ll never ask you for your password, so if someone does, it’s probably not legit” to “Make sure the URL of the site you are on is affiliated with us”, etc. That’s all good stuff.</p>
+
+<p>I wanted to point out a particularly stupid piece of advice that I heard discussed this week. No, it wasn’t from anyone on my team.</p>
+
+<p>“Don’t click on any links in e-mail ever”. Not from me, not from your parents, not from your collaborators. It’s better to be non-responsive and have someone send you a few follow up e-mails than fall victim to a phishing attack. Wait, what? Are you going to uninstall my web browser too?</p>
+
+<p>Don’t get me wrong this approach works. If you never click on links or open attachments in e-mails, you’d never get phished. As a matter of fact, your computer would never get malware if you just never used it. While we’re at it, we could virtually eliminate the risk of car accidents if we never drove anywhere.</p>
+
+<p>My point is that zero-risk thinking is harmful. It’s harmful to organizations and to individuals. I work at an R1 where some of the worlds greatest advancements in Engineering and Agriculture have taken place. The truth is that you cannot innovate in this manner without embracing risk. Sure there are plenty that you’d never take; it’s also true that some, if not taken, will forego certain rewards.</p>
+
+<p>This also means that prevention as a security model is somewhat flawed. Do you want to know how to secure your organization? Unplug your computers. You’re done. But, wait? What happens to your competitive advantage, your research innovation? I promise that the inability to submit grant proposals or collaborate with others in a meaningful way are greater organizational risks than a handful of compromised accounts.  That handful, by the way, can be detected and responded to.</p>
+
+<p>Technology risk is a small, small part of organizational risk. When looking at the two, train yourself to consider the rewards associated with taking those risks.</p>
+
+</div>
+
+	</article>
+
+
+
+	<article class="post">
+
+		
+			<h1><a href="/2016/02/29/bash-port-scanning/">Port Scanning with Bash</a></h1>
+		
+
+		<div class="post-content"><p>Imagine that you are performing an assessment and you find yourself on a system that you need to pivot from and would like to perform some light reconnaissance on your next destination. The system you are using does not have netcat or nmap installed. What do you do? One possibility is that you can dial up <code class="highlighter-rouge">/dev/tcp</code> with a for loop to iterate through a port range using a transport protocol of your choosing.</p>
+
+<p><code class="highlighter-rouge">time for i in {0..1024}; do echo 'derp' &gt; /dev/tcp/deadbadger.nullkey.net/$i &amp;&amp; echo "$i is open"; done 2&gt;/dev/null</code></p>
+
+<p>We start with the <code class="highlighter-rouge">time</code> command which will summarize system resource usage for the latter part of our one-liner. Next, we begin our <code class="highlighter-rouge">for</code> loop with the variable <code class="highlighter-rouge">i</code> and use brace expansion to define our range of ports that we would like the variable <code class="highlighter-rouge">i</code> to represent. Next, we need to tell Bash what to do for each iteration of the loop. In this example, we are telling it to <code class="highlighter-rouge">echo</code> the text “derp” to <code class="highlighter-rouge">/dev/tcp</code> for the host deadbadger.nullkey.net. Immediately following you will notice that we have placed the variable <code class="highlighter-rouge">$i</code> for the port numbers we told Bash we wanted it to iterate through earlier in the command. With chain re-direction of the text we are echoing to <code class="highlighter-rouge">/dev/tcp</code> to another <code class="highlighter-rouge">echo</code> string with the text “<code class="highlighter-rouge">$i</code> is open” with the AND Operator (<code class="highlighter-rouge">&amp;&amp;</code>) so that each time <code class="highlighter-rouge">/dev/tcp</code> receives a response from the host deadbadger.nullkey.net on current port iteration, it will print to STDOUT the text “22 is open”, for example. We tell the for loop to stop each iteration and begin the next one with <code class="highlighter-rouge">;</code> done and redirect STDERR to a file with <code class="highlighter-rouge">2&gt;/dev/null</code> (in this case we are simply discarding it by sending it to the null device).</p>
+
+<div class="highlighter-rouge"><div class="highlight"><pre class="highlight"><code>derp@zerocool:~# time for i in {0..1024}; do echo 'derp' &gt; /dev/tcp/deadbadger.nullkey.net/$i &amp;&amp; echo "$i is open"; done 2&gt;/dev/null
+22 is open
+111 is open
+
+real    0m30.084s
+user    0m0.220s
+sys    0m0.416s
+</code></pre></div></div>
+
+<p>Per RFC 793, when using TCP as your transport for this type of reconnaissance, the scanning host will know that the target host is listening on a particular port if it receives a SYN-ACK response to the initial SYN communication on whatever port is being examined. The host being scanned will send a RST-ACK if it receives a SYN on a non-listening port.</p>
+
+<p>This kind of port mapping can also be accomplished with UDP traffic by dialing up <code class="highlighter-rouge">/dev/udp</code> where the scanning host will deduce that a port is listening if it does not receive an ICMP port unreachable message from the target host. Mapping open UDP ports relies on the assumption that there is nothing filtering ICMP traffic in between the scanning and the target host. If ICMP traffic is being filtered, it may appear to the scanner that all ports are open (remember UDP as a transport provides no confirmation of delivery so IP error detection is all we have unless something at the application layer responds as is the case with DNS).</p>
+
+<p>You do not need to be root to perform this type of scanning since normal users can create sockets and establish full connections to any port.</p>
+
+</div>
+
+	</article>
+
+
+
+	<article class="post">
+
+		
+			<h1><a href="/2015/07/24/ssh-tunneling/">Setting up an SSH Tunnel for Safer Browsing</a></h1>
+		
+
+		<div class="post-content"><p>There may be times where you need to browse the web from an untrusted network. Examples include anything from a public library, coffee shop, a hotel, or even your place of employment. In any of these scenarios your communications could be monitored by a malicious user or curious network administrator.</p>
+
+<p>This guide will show you how to establish a secure connection for browsing the web through a tunnel between your computer and your an SSH server that you control. After reading this, you will be able to set up a tunnel between your computer and your SSH server. All of your web traffic will be encrypted and forwarded from your SSH server on to its final destination.</p>
+
+<p>This works by creating a SOCKS proxy listener on your computer using SSH and configuring your browser to send all web traffic through the SOCKS connection so that it can be sent by your SSH server to a given web destination on your behalf. This guide will also demonstrate how to prevent your browser from exposing information about your web browsing behavior via DNS leaks.</p>
+
+<p>This guide assumes that your threat model includes the local network that your computer is currently connected, and not your trusted SSH server, the network that it is connecting from or the website(s) that you intend to visit.</p>
+
+<p>What you will need</p>
+
+<ul>
+  <li>An SSH client</li>
+  <li>An SSH server</li>
+  <li>A web browser</li>
+</ul>
+
+<p>Setting up the SSH server to allow port forwarding</p>
+
+<p>Look for the <code class="highlighter-rouge">AllowTcpForwarding</code> no directive in your SSH server’s <code class="highlighter-rouge">/etc/ssh/sshd_config</code> file, and change it to <code class="highlighter-rouge">AllowTcpForwarding yes</code> before restarting the service. If the directive isn’t listed at all, simply add it and ensure that it is set to <code class="highlighter-rouge">yes</code>.</p>
+
+<p>Setting up the SOCKS server</p>
+
+<p>From your computer’s terminal, run the following:</p>
+
+<p><code class="highlighter-rouge">ssh -D 31337 user@remotehost.tld</code></p>
+
+<p><code class="highlighter-rouge">-D</code> tells SSH to listen on port <code class="highlighter-rouge">31337</code>. This works by allocating a socket to listen to port on the local side, optionally bound to the specified <code class="highlighter-rouge">bind_address</code>. Whenever a connection is made to this port, the connection is forwarded over the secure channel, and the application protocol is then used to determine where to connect to from the remote machine. Only root can forward privileged ports so be sure to choose any port number greater than 1024. You could choose something lower, but to ensure that there are no conflicts its best to choose a higher numbered port.</p>
+
+<p>This can also be accomplished by defining the <code class="highlighter-rouge">DynamicForward</code> parameter in your client’s <code class="highlighter-rouge">~/.ssh/config</code> file.</p>
+
+<div class="highlighter-rouge"><div class="highlight"><pre class="highlight"><code>Host remotehost.tld
+    HostName 13.37.13.37
+    User username
+    Port 22
+    IdentityFile ~/.ssh/id_rsa
+    DynamicForward 31337
+</code></pre></div></div>
+
+<p>In this scenario, you can simply type <code class="highlighter-rouge">ssh remotehost.tld</code> and your SSH client will take care of the rest.</p>
+
+<p>Setting Up Your Browser</p>
+
+<p>The last step is to configure your preferred browser to use the SOCKS server you just created. This guide assumes Firefox is being used but this can be accomplished with most other browsers.</p>
+
+<p>To set up the browser:</p>
+
+<ul>
+  <li>
+    <p>In Firefox, go to the Edit menu and select Preferences.</p>
+  </li>
+  <li>
+    <p>Go to Advanced and from there to the Network tab.</p>
+  </li>
+  <li>
+    <p>In the Connection area click on Settings.</p>
+  </li>
+</ul>
+
+<p>Make sure the <code class="highlighter-rouge">Remote DNS</code> option is selected. This can also be specified by typing <code class="highlighter-rouge">about:config</code> in Firefox and setting the <code class="highlighter-rouge">network.proxy.socks_remote_dns</code> parameter to <code class="highlighter-rouge">true</code></p>
+
+<p>This is crucial because although your web traffic will be encrypted and forwarded, your DNS requests will not if you do not tell also send your DNS queries through the SOCKS connection. You can fix that in Firefox, and make it send the DNS traffic to your tunnel as well. If you do not specify the remote DNS option, an observer on the untrusted LAN will not be able to see any communication to or from the sites that you are visiting, but will be able to see your browser requesting the IP addresses for their associated domain names which is also undesirable.</p>
+
+<p>Once you have everything set up, you should now verify that the websites you visit see the IP address of your SSH server, not the IP address allocated to you by the untrusted network. You can verify this by visiting a site such as ipchecking.com comparing the address that it thinks you are connecting from against that of your SSH server.</p>
+
+<p>Please keep in mind that the steps taken above will only secure network communications sent to or received by your web browser. Many applications have support for SOCKS proxying but will need to be configured on a case by case basis. If you find yourself using untrusted networks frequently, or have many applications that you need to secure communications for then the it might be time to step up to a VPN solution that has the capability to encrypt all traffic sent to or received by your computer’s network interface.</p>
+
+</div>
+
+	</article>
+
+
+
+	<article class="post">
+
+		
+			<h1><a href="/2014/09/14/image-partitions-vgs/">Imaging Partitions from Volume Groups</a></h1>
+		
+
+		<div class="post-content"><p>To access individual partitions you must use a write-able image, so only use a COPY of the original image, not the actual initial image.</p>
+
+<p>Use <code class="highlighter-rouge">mmls</code> to determine the initial partitions.</p>
+
+<div class="highlighter-rouge"><div class="highlight"><pre class="highlight"><code>DOS Partition Table
+
+Offset Sector: 0
+
+Units are in 512-byte sectors
+
+Slot   Start       End         Length       Description
+
+00: -----   0000000000   0000000000   0000000001   Primary Table (#0)
+
+01: -----   0000000001   0000000062   0000000062   Unallocated
+
+02: 00:00   0000000063   0000240974   0000240912   Linux RAID (0xFD)
+
+03: 00:01   0000240975   0488375999   0488135025   Linux RAID (0xFD)
+
+04: -----   0488376000   0488397167   0000021168   Unallocated
+</code></pre></div></div>
+
+<p>We already know that slot 00:00 is the boot partition and is running ext3. What we’re interested in is slot 00:01 which is a volume group. We will need to mount this locally using losetup. This will involve requiring an offset number. The listing above provides the offset to the beginning of the volume in 512-byte sectors. You will need to multiply the sectors by 512 to get the byte offset.</p>
+
+<p><code class="highlighter-rouge">losetup /dev/loop0 data001.bin -o 123379200</code></p>
+
+<p>Now that it’s mounted we perform a pvscan. Hopefully we’ll see that it had scanned our loop device to find a volume.</p>
+
+<div class="highlighter-rouge"><div class="highlight"><pre class="highlight"><code>PV /dev/loop0       VG vg00   lvm2 [232.75 GB / 108.75 GB free]
+</code></pre></div></div>
+
+<p>It has found the ‘vg00’ volume group. We can now run <code class="highlighter-rouge">lvdisplay</code> to list the partitions.</p>
+
+<div class="highlighter-rouge"><div class="highlight"><pre class="highlight"><code>--- Logical volume ---
+  LV Name                /dev/vg00/root
+  VG Name                vg00
+  LV UUID                d7vKzZ-y6BJ-ypEA-0mTy-NMqa-6CkT-wejIHQI
+  LV Write Access        read/write
+  LV Status              available
+  # open                 0
+  LV Size                1.00 GB
+  Current LE             32
+  Segments               1
+  Allocation             inherit
+  Read ahead sectors     auto
+  - currently set to     256
+  Block device           252:0
+
+  --- Logical volume ---
+  LV Name                /dev/vg00/home
+  VG Name                vg00
+  LV UUID                I7deX9v-FA0c-MwzE-zlmN-SBQb-cjje-I7deX9v
+  LV Write Access        read/write
+  LV Status              available
+  # open                 0
+  LV Size                1.00 GB
+  Current LE             32
+  Segments               1
+  Allocation             inherit
+  Read ahead sectors     auto
+  - currently set to     256
+  Block device           252:1
+
+  --- Logical volume ---
+  LV Name                /dev/vg00/services
+  VG Name                vg00
+  LV UUID                d7vKzZ-y6BJ-Uinn-dj94-0mTy-837a-wejIHQI
+  LV Write Access        read/write
+  LV Status              available
+  # open                 0
+  LV Size                50.00 GB
+  Current LE             1600
+  Segments               2
+  Allocation             inherit
+  Read ahead sectors     auto
+  - currently set to     256
+  Block device           252:2
+
+  --- Logical volume ---
+  LV Name                /dev/vg00/usr
+  VG Name                vg00
+  LV UUID                d7vKzZ-UgTj-0JZx-7cKH-NxDc-aF83-Md1GTE
+  LV Write Access        read/write
+  LV Status              available
+  # open                 0
+  LV Size                4.00 GB
+  Current LE             128
+  Segments               1
+  Allocation             inherit
+  Read ahead sectors     auto
+  - currently set to     256
+  Block device           252:3
+
+  --- Logical volume ---
+  LV Name                /dev/vg00/var
+  VG Name                vg00
+  LV UUID                r2uIPW-N057-yLMO-nH3X-OyGt-XfBf-xs22Iv
+  LV Write Access        read/write
+  LV Status              available
+  # open                 0
+  LV Size                2.00 GB
+  Current LE             64
+  Segments               1
+  Allocation             inherit
+  Read ahead sectors     auto
+  - currently set to     256
+  Block device           252:4
+
+  --- Logical volume ---
+  LV Name                /dev/vg00/swap
+  VG Name                vg00
+  LV UUID                V6IVEW-Bc8O-5dx3-0ccF-r1qn-EJDv-d2Egr1
+  LV Write Access        read/write
+  LV Status              available
+  # open                 0
+  LV Size                16.00 GB
+  Current LE             512
+  Segments               1
+  Allocation             inherit
+  Read ahead sectors     auto
+  - currently set to     256
+  Block device           252:5
+</code></pre></div></div>
+
+<p>We can now start creating images of the individual partitions.</p>
+
+<p><code class="highlighter-rouge">dcfldd if=/dev/vg00/root of=test.root.bin hash=md5,sha1 md5log=test.root.md5 sha1log=test.root.sha1</code></p>
+
+<p>This method should work for systems with volume groups across multiple images.</p>
+
+</div>
+
+	</article>
+
+
+
+	<article class="post">
+
+		
+			<h1><a href="/2014/09/05/generate-csr/">Generating a Certificate Signing Request (CSR)</a></h1>
+		
+
+		<div class="post-content"><p>Create a directory for your domain underneath /etc/ssl and change into it</p>
+
+<p><code class="highlighter-rouge">derp@arkham:~# mkdir /etc/ssl/domain.tld &amp;&amp; cd /etc/ssl/domain.tld</code></p>
+
+<p>Generate an RSA private key for your domain and the certificate signing request, I’ve specified a 4096 bit long modulus and a SHA-2 cert in this example</p>
+
+<p><code class="highlighter-rouge">derp@arkham:/etc/ssl/domain.tld# openssl req -nodes -newkey rsa:4096 -sha256 -keyout domain.tld.key -out domain.tld.csr</code></p>
+
+<div class="highlighter-rouge"><div class="highlight"><pre class="highlight"><code>The fields required in a certificate signing request along with an explanation and example are listed below:
+Common name – The fully qualified domain name (FQDN) for your web server. This must be an exact match.
+Organization – The exact legal name of your organization. Do not abbreviate your organization name.
+Organization unit - Section of the organization, can be left empty if this does not apply to your case.
+City/Locality - The city where your organization is legally located.
+State/country/region - The state/county/region where your organization is legally located. Must not be abbreviated.
+Country - The two-letter ISO abbreviation for your country.
+Email address - The email address used to contact your organization.
+</code></pre></div></div>
+
+<p>Use restrictive permissions to protect the key file by making it readable only by its owner</p>
+
+<p><code class="highlighter-rouge">derp@arkham:/etc/ssl/domain.tld# chmod 400 domain.tld.key</code></p>
+
+<p>Make root the owner of the keyfile</p>
+
+<p><code class="highlighter-rouge">derp@arkham:/etc/ssl/domain.tld# chown root domain.tld.key</code></p>
+
+<p>Stream your newly created Base 64 representation of the Certificate Signing Request that you will use to obtain your SSL certificate.</p>
+
+<p><code class="highlighter-rouge">derp@arkham:/etc/ssl/domain.tld# cat domain.tld.csr</code></p>
+
+<div class="highlighter-rouge"><div class="highlight"><pre class="highlight"><code>-----BEGIN CERTIFICATE REQUEST-----
+Base 64 encoded data
+-----END CERTIFICATE REQUEST-----
+</code></pre></div></div>
+</div>
+
+	</article>
+
+
+
+	<article class="post">
+
+		
+			<h1><a href="/1970/01/01/hello-world/">Hello World</a></h1>
+		
+
+		<div class="post-content"><p>You’ll find this post in your <code class="highlighter-rouge">_posts</code> directory - edit this post and re-build (or run with the <code class="highlighter-rouge">-w</code> switch) to see your changes!
+To add new posts, simply add a file in the <code class="highlighter-rouge">_posts</code> directory that follows the convention: YYYY-MM-DD-name-of-post.ext.</p>
+
+<p>Jekyll also offers powerful support for code snippets:</p>
+
+<figure class="highlight"><pre><code class="language-python" data-lang="python"><span class="k">def</span> <span class="nf">whoami</span><span class="p">()</span>
+  <span class="k">print</span> <span class="s">"Hi, Wayland"</span>
+
+<span class="n">whomi</span><span class="p">()</span>
+<span class="c"># prints 'Hi, Wayland' to STDOUT.</span></code></pre></figure>
+
+<p>Check out the <a href="http://jekyllrb.com">Jekyll docs</a> for more info on how to get the most out of Jekyll. File all bugs/feature requests at <a href="https://github.com/mojombo/jekyll">Jekyll’s GitHub repo</a>.</p>
+
+</div>
+
+	</article>
+
+
+
+
+
+
+
+    </div>
+
+
+
+  </div>
+
+
+
+  <footer id="footer">
+    <center><p class="copyright">Copyleft &copy; 2018 WM. Powered by <a href="http://jekyllrb.com">Jekyll.</a></p></center>
+  </footer>
+
+
+
+  <script src="//ajax.googleapis.com/ajax/libs/jquery/1.10.1/jquery.min.js"></script>
+  <script src="/assets/js/jquery.mobilemenu.min.js"></script>
+
+  <script>
+    $(document).ready(function(){
+      $('#sidebar nav ul').mobileMenu({'topOptionText': 'Menu', 'prependTo': '#sidebar nav'});
+    });
+  </script>
+
+
+
+</body>
+</html>
