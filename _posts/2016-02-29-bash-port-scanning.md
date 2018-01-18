@@ -5,7 +5,7 @@ date:   2016-02-29 00:00:01
 categories: jekyll update
 ---
 
-Imagine that you are performing an assessment and you find yourself on a system that you need to pivot from and would like to perform some light reconnaissance on your next destination. The system you are using does not have netcat or nmap installed. What do you do? One possibility is that you can dial up `/dev/tcp` with a for loop to iterate through a port range using a transport protocol of your choosing.
+Imagine that you are performing an assessment and you find a system that you need to pivot to and would like to perform some light reconnaissance on your next destination. The system you are using does not have netcat or nmap installed. What do you do? One possibility is that you can dial up `/dev/tcp` with a for loop to iterate through a port range of your choosing.
 
 `time for i in {0..1024}; do echo 'derp' > /dev/tcp/deadbadger.nullkey.net/$i && echo "$i is open"; done 2>/dev/null`
 
