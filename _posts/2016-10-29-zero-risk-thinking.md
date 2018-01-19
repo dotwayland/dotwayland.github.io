@@ -13,7 +13,7 @@ I wanted to point out a particularly stupid piece of advice that I heard discuss
 
 “Don’t click on any links in e-mail ever. Not from me, not from your parents, not from your collaborators. It’s better to be non-responsive and have someone send you a few follow up e-mails than fall victim to a phishing attack." Wait, what? Should I uninstall my web browser too?
 
-Hyperbole aside, this approach works. If you never clicked on links or opened attachments, you’d never get phished. As a matter of fact, your computer would never get malware if you just never used it. While we’re at it, we could virtually eliminate the risk of car accidents if we never drove anywhere. Aren't some risks worth taking? Yes!
+Hyperbole aside, this approach works. If you never clicked on links or opened attachments, you’d never get phished. As a matter of fact, your computer would never get malware if you just never used it. While we’re at it, we could eliminate the risk of car accidents if we never drove anywhere. Aren't some risks worth taking? Yes!
 
 Zero-risk thinking is harmful. It’s harmful to organizations and to individuals. I work at an R1 where some of the worlds greatest advancements in Engineering and Agriculture have taken place. The truth is that you cannot innovate in this manner without embracing risk. Sure there are plenty of risks that you’d never take; it’s also true that some, if not taken, will forego certain rewards.
 
