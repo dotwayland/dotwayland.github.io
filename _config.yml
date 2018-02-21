@@ -7,3 +7,4 @@ paginate: 10
 
 plugins: [jekyll-paginate]
 exclude: ['README.md', 'Gemfile.lock', 'Gemfile', 'Rakefile']
+remote_theme: nielsenramon/chalk
