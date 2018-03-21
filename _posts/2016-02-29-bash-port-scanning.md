@@ -23,7 +23,7 @@ sys    0m0.416s
 
 Per RFC 793, when using TCP as your transport for this type of reconnaissance, the scanning host will know that the target host is listening on a particular port if it receives a SYN-ACK response to the initial SYN communication on whatever port is being examined. The host being scanned will send a RST-ACK if it receives a SYN on a non-listening port.
 
-This kind of port mapping can also be accomplished with UDP traffic by dialing up `/dev/udp` where the scanning host will deduce that a port is listening if it does not receive an ICMP port unreachable message from the target host. Mapping open UDP ports relies on the assumption that there is nothing filtering ICMP traffic in between the scanning and the target host. If ICMP traffic is being filtered, it may appear to the scanner that all ports are open (remember UDP as a transport provides no confirmation of delivery so IP error detection is all we have unless something at the application layer responds as is the case with DNS).
+This method doesn't work so well with UDP. As it turns out, Bash has a hard time interpreting ICMP error messages.
 
 You do not need to be root to perform this type of scanning since normal users can create sockets and establish full connections to any port.
 
