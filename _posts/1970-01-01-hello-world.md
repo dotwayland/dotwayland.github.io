@@ -11,11 +11,11 @@ To add new posts, simply add a file in the `_posts` directory that follows the c
 Jekyll also offers powerful support for code snippets:
 
 {% highlight python %}
-def whoami()
-  print "Hi, Wayland"
+def whoami(name):
+	print("Hi, my name is {0}".format(name))
 
-whomi()
-# prints 'Hi, Wayland' to STDOUT.
+whoami("Wayland")
+Hi, my name is Wayland
 {% endhighlight %}
 
 Check out the [Jekyll docs][jekyll] for more info on how to get the most out of Jekyll. File all bugs/feature requests at [Jekyll's GitHub repo][jekyll-gh].
