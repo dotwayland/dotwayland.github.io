@@ -12,7 +12,7 @@ Jekyll also offers powerful support for code snippets:
 
 {% highlight python %}
 def whoami(name):
-	print("Hi, my name is {0}".format(name))
+    print("Hi, my name is {0}".format(name))
 
 whoami("Wayland")
 Hi, my name is Wayland
